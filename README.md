@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Compliance Checklist & Technical Breakdown
+1. 5 Distinct States
+Idle: Default resting state displaying "Send Message" with an arrow icon.
 
-## Getting Started
+Hover / Active: Micro-scaling (1.03x) and slight subtle shift (-1px y-axis) to indicate clickability.
 
-First, run the development server:
+Loading: Disables pointer events, renders a smooth spinning loader, and communicates progress ("Sending...").
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Success: Tactile spring motion (stiffness: 400, damping: 25) with a checkmark icon indicating completion, auto-resetting back to Idle after 2 seconds.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Error: Displays a destructive feedback badge with an error shake animation and a clear retry action ("Failed. Retry?").
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Disabled: Full support for native disabled attribute with adjusted opacity (50%) and cursor-not-allowed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Zero Layout Thrash (Compositor-Friendly)
+GPU Acceleration: Animated properties are strictly limited to opacity and transform (y-axis, scale, and x-axis shake).
 
-## Learn More
+No Layout Reflows: Content swapping is managed within fixed container bounds using Framer Motion's AnimatePresence (mode="wait"). The browser does not recalculate element geometry or dimensions during transitions.
 
-To learn more about Next.js, take a look at the following resources:
+3. Interruptibility & Robustness
+Async Lifecycle: Spam-clicking during loading, success, or error states is intercepted gracefully without breaking internal hooks or timer states.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+State Recovery: Clicking on an error or success state allows immediate reset back to idle, giving the user total control over retry flows.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Accessibility & Inclusive Design
+Focus States: Styled with high-contrast native focus-visible:ring-2 outline indicators for seamless keyboard navigation (Tab / Enter / Space).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Prefers Reduced Motion: Automatically respects user system preferences for reduced motion by suppressing structural transforms and intense shake animations, while maintaining essential color and status transitions.
