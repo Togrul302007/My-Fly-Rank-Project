@@ -1,6 +1,3 @@
-import { StreamingTextResponse, simulateReadableStream } from "ai";
-
-
 // Set to true or use searchParams/headers to test sabotage paths
 const SABOTAGE_CONFIG = {
   FAIL_IMMEDIATELY: false, // Tests immediate 500 error
@@ -21,13 +18,18 @@ export async function POST(req: Request) {
     // Simulates connection dropping halfway through response
     const stream = new ReadableStream({
       async start(controller) {
-        controller.enqueue("This is the start of the response...");
+        controller.enqueue(new TextEncoder().encode("This is the start of the response..."));
         await new Promise((resolve) => setTimeout(resolve, 1000));
         controller.error(new Error("Stream interrupted: Connection lost mid-response"));
       },
     });
 
-    return new StreamingTextResponse(stream);
+    // StreamingTextResponse(stream) əvəzinə standart Response qaytarırıq:
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+      },
+    });
   }
 
   // Normal Chat Completion Logic goes here...
