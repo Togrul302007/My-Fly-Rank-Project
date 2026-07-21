@@ -11,8 +11,8 @@ const topicSchema = z.object({
 type TopicInput = z.infer<typeof topicSchema>;
 
 export const topicAnalyzerTool = tool({
-  description: 'Verilən mövzunu və ya koda dair göstəriciləri analiz edib skor və tövsiyələr qaytarır.',
-  inputSchema: topicSchema,
+  description: 'Verilən mövzunu və ya koda dair göstəriciləri analiz edib skor və tövsiyəl...',
+  parameters: topicSchema, // <-- inputSchema yerinə 'parameters' yazırıq!
   execute: async ({ topic, category }: TopicInput) => {
     // Real şəraitdə bura API çağırışı və ya daxili hesablama olur
     await new Promise((resolve) => setTimeout(resolve, 1500)); // 1.5 san simulyasiya
